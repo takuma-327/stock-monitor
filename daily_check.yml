@@ -1,0 +1,21 @@
+name: Stock Price Check
+
+on:
+  schedule:
+    # 平日の日本時間 9:00〜15:00 の間、1時間おきに実行（UTC表記）
+    - cron: '0 0-6 * * 1-5'
+  workflow_dispatch: # 手動で「Run workflow」ボタンを出す設定
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - run: pip install yfinance requests
+      - name: Run script
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python stock_checker.py
